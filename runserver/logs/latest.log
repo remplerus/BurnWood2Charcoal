@@ -1,0 +1,58 @@
+[17Apr.2022 15:52:11.799] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserveruserdev, --gameDir, ., --fml.forgeVersion, 40.0.52, --fml.mcVersion, 1.18.2, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20220404.173914]
+[17Apr.2022 15:52:11.802] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 9.1.3+9.1.3+main.9b69c82a starting: java version 17.0.1 by Eclipse Adoptium
+[17Apr.2022 15:52:11.905] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/rapha/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%2322!/ Service=ModLauncher Env=SERVER
+[17Apr.2022 15:52:13.157] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserveruserdev' with arguments [--gameDir, .]
+[17Apr.2022 15:52:18.239] [modloading-worker-0/INFO] [com.rempler.burnlog2char.BurnLog2Char/]: Starting up burnlog2char
+[17Apr.2022 15:52:18.548] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 40.0.52, for MC 1.18.2 with MCP 20220404.173914
+[17Apr.2022 15:52:18.549] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v40.0.52 Initialized
+[17Apr.2022 15:52:19.953] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[17Apr.2022 15:52:20.989] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Found status: BETA Current: 40.0.52 Target: 40.0.52
+[17Apr.2022 15:52:21.242] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[17Apr.2022 15:52:22.323] [main/WARN] [net.minecraft.server.packs.VanillaPackResources/]: Assets URL 'union:/C:/Users/rapha/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.2-40.0.52_mapped_official_1.18.2/forge-1.18.2-40.0.52_mapped_official_1.18.2-recomp.jar%2376!/assets/.mcassetsroot' uses unexpected schema
+[17Apr.2022 15:52:22.323] [main/WARN] [net.minecraft.server.packs.VanillaPackResources/]: Assets URL 'union:/C:/Users/rapha/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.2-40.0.52_mapped_official_1.18.2/forge-1.18.2-40.0.52_mapped_official_1.18.2-recomp.jar%2376!/data/.mcassetsroot' uses unexpected schema
+[17Apr.2022 15:52:25.523] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[17Apr.2022 15:52:25.525] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[17Apr.2022 15:52:25.529] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[17Apr.2022 15:52:25.530] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[17Apr.2022 15:52:25.531] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[17Apr.2022 15:52:28.812] [Worker-Main-39/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 7 recipes
+[17Apr.2022 15:52:30.622] [Worker-Main-39/INFO] [net.minecraft.advancements.AdvancementList/]: Loaded 1141 advancements
+[17Apr.2022 15:52:31.289] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting minecraft server version 1.18.2
+[17Apr.2022 15:52:31.289] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Loading properties
+[17Apr.2022 15:52:31.289] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Default game type: SURVIVAL
+[17Apr.2022 15:52:31.289] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
+[17Apr.2022 15:52:31.331] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting Minecraft server on *:25565
+[17Apr.2022 15:52:31.344] [Server thread/INFO] [net.minecraft.server.network.ServerConnectionListener/]: Using default channel type
+[17Apr.2022 15:52:31.486] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[17Apr.2022 15:52:31.486] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: The server will make no attempt to authenticate usernames. Beware.
+[17Apr.2022 15:52:31.486] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[17Apr.2022 15:52:31.486] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: To change this, set "online-mode" to "true" in the server.properties file.
+[17Apr.2022 15:52:31.508] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Preparing level "world"
+[17Apr.2022 15:52:31.621] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[17Apr.2022 15:52:32.008] [Worker-Main-38/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
+[17Apr.2022 15:52:32.123] [Worker-Main-34/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
+[17Apr.2022 15:52:32.622] [Worker-Main-38/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
+[17Apr.2022 15:52:33.122] [Worker-Main-33/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 58%
+[17Apr.2022 15:52:33.464] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 1843 ms
+[17Apr.2022 15:52:33.465] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Done (1.968s)! For help, type "help"
+[17Apr.2022 15:52:33.470] [Server thread/INFO] [net.minecraftforge.gametest.ForgeGameTestHooks/]: Enabled Gametest Namespaces: [burnlog2char]
+[17Apr.2022 15:52:33.478] [Server thread/INFO] [net.minecraftforge.server.permission.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+[17Apr.2022 15:52:47.244] [Server thread/INFO] [net.minecraftforge.common.AdvancementLoadFix/]: Using new advancement loading for net.minecraft.server.PlayerAdvancements@1f6c9b1c
+[17Apr.2022 15:52:47.251] [Server thread/INFO] [net.minecraft.server.players.PlayerList/]: Dev[/127.0.0.1:63437] logged in with entity id 44 at (6.5, 69.0, -9.5)
+[17Apr.2022 15:52:47.266] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Dev joined the game
+[17Apr.2022 15:53:03.188] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Made Dev a server operator
+[17Apr.2022 15:53:08.858] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: [Dev: Set own game mode to Creative Mode]
+[17Apr.2022 15:53:15.558] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: [Dev: Gave 1 [Flint and Steel] to Dev]
+[17Apr.2022 15:54:14.132] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Unknown or incomplete command, see below for error
+[17Apr.2022 15:54:14.132] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: exit<--[HERE]
+[17Apr.2022 15:54:15.631] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Stopping the server
+[17Apr.2022 15:54:15.678] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[17Apr.2022 15:54:15.678] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[17Apr.2022 15:54:15.688] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[17Apr.2022 15:54:16.237] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[17Apr.2022 15:54:18.655] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[17Apr.2022 15:54:18.656] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[17Apr.2022 15:54:18.668] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[17Apr.2022 15:54:18.668] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[17Apr.2022 15:54:18.668] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[17Apr.2022 15:54:18.669] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved

@@ -1,0 +1,6 @@
+
+[config]
+	#Set the chance of dropping charcoal [Default: 50]
+	#Range: 0 ~ 100
+	charcoalChance = 50
+
