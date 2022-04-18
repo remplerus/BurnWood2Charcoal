@@ -2,7 +2,6 @@ package com.rempler.burnlog2char;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
@@ -11,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +28,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.Random;
@@ -36,9 +36,9 @@ import java.util.Random;
 @Mod("burnlog2char")
 public class BurnLog2Char
 {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(BurnLog2Char.class);
     public static final String MODID = "burnlog2char";
-    public static final TagKey<Item> FLINT_STEEL = ItemTags.create(new ResourceLocation("forge", "flint_and_steels"));
+    public static final Tag.Named<Item> FLINT_STEEL = ItemTags.createOptional(new ResourceLocation("forge", "flint_and_steels"));
 
     public BurnLog2Char()
     {
