@@ -2,7 +2,6 @@ package com.rempler.burnlog2char;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.entity.item.ItemEntity;
@@ -10,15 +9,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -37,7 +34,7 @@ public class BurnLog2Char
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(BurnLog2Char.class);
     public static final String MODID = "burnlog2char";
-    public static final ITag.INamedTag<Item> FLINT_STEEL = ItemTags.createOptional(new ResourceLocation("forge", "flint_and_steels"));
+    public static final Tag<Item> FLINT_STEEL = new Tag<>(new ResourceLocation("forge", "flint_and_steels"));
 
     public BurnLog2Char()
     {
@@ -69,8 +66,8 @@ public class BurnLog2Char
     }
 
     public static class ItemTagsGenerator extends ItemTagsProvider {
-        public ItemTagsGenerator(DataGenerator generator, BlockTagsProvider blockTagsProvider, ExistingFileHelper existingFileHelper) {
-            super(generator, blockTagsProvider, BurnLog2Char.MODID, existingFileHelper);
+        public ItemTagsGenerator(DataGenerator generator) {
+            super(generator);
         }
 
         protected void addTags() {
@@ -83,13 +80,13 @@ public class BurnLog2Char
         public static void onItemUseEvent(PlayerInteractEvent.RightClickBlock event) {
             ItemStack stack = event.getItemStack();
             World level = event.getWorld();
-            if (FLINT_STEEL.contains(stack.getItem())) {
-                if (level.getBlockState(event.getPos()).is(BlockTags.LOGS_THAT_BURN)) {
-                    BlockPos pos = event.getPos();
-                    if (!level.isClientSide) {
+            if (!level.isClientSide) {
+                if (event.getPlayer().getMainHandItem().getItem().equals(Items.FLINT_AND_STEEL) &&
+                    level.getBlockState(event.getPos()).is(BlockTags.LOGS)) {
+                        BlockPos pos = event.getPos();
                         ServerWorld serverLevel = (ServerWorld) level;
                         level.destroyBlock(event.getPos(), false);
-                        if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
+                        if (new Random().nextInt(100) < Config.charcoalChance.get()) {
                             serverLevel.addFreshEntity(new ItemEntity(serverLevel, pos.getX() + 0.5D, pos.getY() + 0.5D,
                                             pos.getZ() + 0.5D, Items.CHARCOAL.getDefaultInstance()));
                         }
@@ -97,7 +94,7 @@ public class BurnLog2Char
                             player.broadcastBreakEvent(event.getPlayer().getUsedItemHand());
                         });
                         event.setCanceled(true);
-                    }
+
                 }
             }
         }
@@ -105,9 +102,8 @@ public class BurnLog2Char
         @SubscribeEvent
         public static void gatherData(GatherDataEvent event) {
             if (event.includeServer()) {
-                ExistingFileHelper fileHelper = event.getExistingFileHelper();
                 DataGenerator generator = event.getGenerator();
-                generator.addProvider(new ItemTagsGenerator(generator, new BlockTagsProvider(generator, BurnLog2Char.MODID, fileHelper), fileHelper));
+                generator.addProvider(new ItemTagsGenerator(generator));
             }
         }
     }
