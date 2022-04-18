@@ -2,20 +2,20 @@ package com.rempler.burnlog2char;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraft.core.BlockPos;
+import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.data.ItemTagsProvider;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -24,8 +24,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class BurnLog2Char
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(BurnLog2Char.class);
     public static final String MODID = "burnlog2char";
-    public static final Tag.Named<Item> FLINT_STEEL = ItemTags.createOptional(new ResourceLocation("forge", "flint_and_steels"));
+    public static final ITag.INamedTag<Item> FLINT_STEEL = ItemTags.createOptional(new ResourceLocation("forge", "flint_and_steels"));
 
     public BurnLog2Char()
     {
@@ -82,12 +82,12 @@ public class BurnLog2Char
     public static class EventHandler {
         public static void onItemUseEvent(PlayerInteractEvent.RightClickBlock event) {
             ItemStack stack = event.getItemStack();
-            Level level = event.getWorld();
-            if (stack.is(FLINT_STEEL)) {
+            World level = event.getWorld();
+            if (FLINT_STEEL.contains(stack.getItem())) {
                 if (level.getBlockState(event.getPos()).is(BlockTags.LOGS_THAT_BURN)) {
                     BlockPos pos = event.getPos();
                     if (!level.isClientSide) {
-                        ServerLevel serverLevel = (ServerLevel) level;
+                        ServerWorld serverLevel = (ServerWorld) level;
                         level.destroyBlock(event.getPos(), false);
                         if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
                             serverLevel.addFreshEntity(new ItemEntity(serverLevel, pos.getX() + 0.5D, pos.getY() + 0.5D,

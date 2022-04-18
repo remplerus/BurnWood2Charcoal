@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[37,)"
+loaderVersion="[36,)"
 license="All rights reserved"
 [[mods]]
 modId="burnlog2char"
@@ -11,6 +11,6 @@ Burn any Logs to Charcoal
 [[dependencies.burnlog2char]]
     modId="forge"
     mandatory=true
-    versionRange="[37,)"
+    versionRange="[36.2.20,)"
     ordering="NONE"
     side="BOTH"
