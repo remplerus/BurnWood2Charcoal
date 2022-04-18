@@ -23,7 +23,7 @@ run
 runserver
 .cache
 cache
-logs
+run\logs
 
 # Files from Forge MDK
 forge*changelog.txt

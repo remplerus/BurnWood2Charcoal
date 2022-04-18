@@ -26,7 +26,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +69,7 @@ public class BurnLog2Char
     }
 
     public static class ItemTagsGenerator extends ItemTagsProvider {
-        public ItemTagsGenerator(DataGenerator generator, BlockTagsProvider blockTagsProvider, @Nullable ExistingFileHelper existingFileHelper) {
+        public ItemTagsGenerator(DataGenerator generator, BlockTagsProvider blockTagsProvider, ExistingFileHelper existingFileHelper) {
             super(generator, blockTagsProvider, BurnLog2Char.MODID, existingFileHelper);
         }
 
