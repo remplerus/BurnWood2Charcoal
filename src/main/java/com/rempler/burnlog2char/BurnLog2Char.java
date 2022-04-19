@@ -10,6 +10,7 @@ import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -45,18 +47,21 @@ public class BurnLog2Char
         LOGGER.info("Starting up " + MODID);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
-        MinecraftForge.EVENT_BUS.addListener(EventHandler::onItemUseEvent);
+        MinecraftForge.EVENT_BUS.addListener(EventHandler::onItemUseOnBlockEvent);
     }
 
     public static class Config {
         public static final ForgeConfigSpec COMMON_CONFIG;
         public static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
         public static final ForgeConfigSpec.IntValue charcoalChance;
+        public static final ForgeConfigSpec.IntValue charcoalChanceFlint;
 
         static {
             COMMON_BUILDER.push("config");
             charcoalChance = COMMON_BUILDER.comment("Set the chance of dropping charcoal [Default: 50]")
-                    .defineInRange("charcoalChance", 50, 0, 100);
+                    .defineInRange("charcoalChance", 30, 0, 100);
+            charcoalChanceFlint = COMMON_BUILDER.comment("Set the chance of dropping charcoal by using flint and steel [Default: 50]")
+                    .defineInRange("charcoalChanceFlint", 60, 0, 100);
             COMMON_BUILDER.pop();
 
             COMMON_CONFIG = COMMON_BUILDER.build();
@@ -81,22 +86,39 @@ public class BurnLog2Char
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class EventHandler {
-        public static void onItemUseEvent(PlayerInteractEvent.RightClickBlock event) {
-            ItemStack stack = event.getItemStack();
+        public static void onItemUseOnBlockEvent(PlayerInteractEvent.RightClickBlock event) {
             Level level = event.getWorld();
-            if (stack.is(FLINT_STEEL)) {
-                if (level.getBlockState(event.getPos()).is(BlockTags.LOGS_THAT_BURN)) {
+            if (!level.isClientSide) {
+                ServerLevel serverLevel = (ServerLevel) level;
+                ItemStack stack = event.getItemStack();
+                if (stack.is(FLINT_STEEL)) {
                     BlockPos pos = event.getPos();
-                    if (!level.isClientSide) {
-                        ServerLevel serverLevel = (ServerLevel) level;
-                        level.destroyBlock(event.getPos(), false);
-                        if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
+                    if (serverLevel.getBlockState(pos).is(BlockTags.LOGS_THAT_BURN)) {
+                        serverLevel.destroyBlock(pos, false);
+                        if (new Random().nextInt(0, 100) < Config.charcoalChanceFlint.get()) {
                             serverLevel.addFreshEntity(new ItemEntity(serverLevel, pos.getX() + 0.5D, pos.getY() + 0.5D,
-                                            pos.getZ() + 0.5D, Items.CHARCOAL.getDefaultInstance()));
+                                    pos.getZ() + 0.5D, Items.CHARCOAL.getDefaultInstance()));
                         }
-                        stack.hurtAndBreak(1, event.getPlayer(), (player) -> {
-                            player.broadcastBreakEvent(event.getPlayer().getUsedItemHand());
-                        });
+                        stack.hurtAndBreak(1, event.getPlayer(), (player) -> player.broadcastBreakEvent(event.getPlayer().getUsedItemHand()));
+                        event.setCanceled(true);
+                    }
+                }
+                if (stack.is(ItemTags.LOGS_THAT_BURN)) {
+                    BlockPos pos = event.getPos();
+                    if (serverLevel.getBlockState(pos).is(BlockTags.FIRE)) {
+                        Vec3 playerPos = event.getPlayer().position();
+                        if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
+                            serverLevel.addFreshEntity(new ItemEntity(serverLevel, playerPos.x(), playerPos.y() + 1D,
+                                    playerPos.z(), Items.CHARCOAL.getDefaultInstance()));
+                        }
+                        event.setCanceled(true);
+                    }
+                    if (serverLevel.getFluidState(pos.above()).is(FluidTags.LAVA)) {
+                        Vec3 playerPos = event.getPlayer().position();
+                        if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
+                            serverLevel.addFreshEntity(new ItemEntity(serverLevel, playerPos.x(), playerPos.y() + 1D,
+                                    playerPos.z(), Items.CHARCOAL.getDefaultInstance()));
+                        }
                         event.setCanceled(true);
                     }
                 }
