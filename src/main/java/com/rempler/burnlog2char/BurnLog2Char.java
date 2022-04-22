@@ -18,10 +18,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.item.ItemEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -48,6 +53,7 @@ public class BurnLog2Char
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
         MinecraftForge.EVENT_BUS.addListener(EventHandler::onItemUseOnBlockEvent);
+        MinecraftForge.EVENT_BUS.addListener(EventHandler::onEntityJoinWorldEvent);
     }
 
     public static class Config {
@@ -86,6 +92,7 @@ public class BurnLog2Char
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class EventHandler {
+        // TODO adding campfires
         public static void onItemUseOnBlockEvent(PlayerInteractEvent.RightClickBlock event) {
             Level level = event.getWorld();
             if (!level.isClientSide) {
@@ -120,6 +127,28 @@ public class BurnLog2Char
                                     playerPos.z(), Items.CHARCOAL.getDefaultInstance()));
                         }
                         event.setCanceled(true);
+                    }
+                }
+            }
+        }
+
+        public static void onEntityJoinWorldEvent(EntityEvent event) {
+            //use any TickEvent that needs an entity.
+            if (event.getEntity() != null) {
+                Level level = event.getEntity().level;
+                if(!level.isClientSide) {
+                    ServerLevel serverLevel = (ServerLevel) level;
+                    if (event.getEntity() instanceof ItemEntity itemEntity) {
+                        if (itemEntity.getItem().is(ItemTags.LOGS_THAT_BURN)) {
+                            BlockState state = serverLevel.getBlockState(itemEntity.blockPosition());
+                            if (state.is(BlockTags.FIRE) || state.getFluidState().is(FluidTags.LAVA)) {
+                                Vec3 itemEntityPos = itemEntity.position();
+                                if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
+                                    serverLevel.addFreshEntity(new ItemEntity(serverLevel, itemEntityPos.x(), itemEntityPos.y() + 2D,
+                                            itemEntityPos.z(), Items.CHARCOAL.getDefaultInstance()));
+                                }
+                            }
+                        }
                     }
                 }
             }
