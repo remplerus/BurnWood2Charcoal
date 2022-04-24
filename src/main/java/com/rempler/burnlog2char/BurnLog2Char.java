@@ -9,6 +9,7 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
@@ -19,14 +20,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.item.ItemEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -53,7 +53,7 @@ public class BurnLog2Char
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
         MinecraftForge.EVENT_BUS.addListener(EventHandler::onItemUseOnBlockEvent);
-        MinecraftForge.EVENT_BUS.addListener(EventHandler::onEntityJoinWorldEvent);
+        MinecraftForge.EVENT_BUS.addListener(EventHandler::onEntityEvent);
     }
 
     public static class Config {
@@ -111,16 +111,10 @@ public class BurnLog2Char
                     }
                 }
                 if (stack.is(ItemTags.LOGS_THAT_BURN)) {
-                    BlockPos pos = event.getPos();
-                    if (serverLevel.getBlockState(pos).is(BlockTags.FIRE)) {
-                        Vec3 playerPos = event.getPlayer().position();
-                        if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
-                            serverLevel.addFreshEntity(new ItemEntity(serverLevel, playerPos.x(), playerPos.y() + 1D,
-                                    playerPos.z(), Items.CHARCOAL.getDefaultInstance()));
-                        }
-                        event.setCanceled(true);
-                    }
-                    if (serverLevel.getFluidState(pos.above()).is(FluidTags.LAVA)) {
+                    BlockState state = serverLevel.getBlockState(event.getPos());
+                    FluidState fstate = serverLevel.getFluidState(event.getPos().above());
+                    if (state.is(BlockTags.FIRE) || fstate.is(FluidTags.LAVA) ||
+                            state.is(BlockTags.CAMPFIRES) && state.getValue(BlockStateProperties.LIT)) {
                         Vec3 playerPos = event.getPlayer().position();
                         if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
                             serverLevel.addFreshEntity(new ItemEntity(serverLevel, playerPos.x(), playerPos.y() + 1D,
@@ -132,17 +126,28 @@ public class BurnLog2Char
             }
         }
 
-        public static void onEntityJoinWorldEvent(EntityEvent event) {
-            //use any TickEvent that needs an entity.
+        public static void onEntityEvent(EntityEvent event) {
             if (event.getEntity() != null) {
                 Level level = event.getEntity().level;
                 if(!level.isClientSide) {
                     ServerLevel serverLevel = (ServerLevel) level;
                     if (event.getEntity() instanceof ItemEntity itemEntity) {
                         if (itemEntity.getItem().is(ItemTags.LOGS_THAT_BURN)) {
-                            BlockState state = serverLevel.getBlockState(itemEntity.blockPosition());
-                            if (state.is(BlockTags.FIRE) || state.getFluidState().is(FluidTags.LAVA)) {
-                                Vec3 itemEntityPos = itemEntity.position();
+                            BlockState state = serverLevel.getBlockState(new BlockPos(itemEntity.position()));
+                            BlockState state2 = serverLevel.getBlockState(itemEntity.blockPosition().below());
+                            Vec3 itemEntityPos = itemEntity.position();
+                            if (state.is(BlockTags.FIRE) || state.getFluidState().is(FluidTags.LAVA) || state2.is(BlockTags.CAMPFIRES)) {
+                                if (state2.is(BlockTags.CAMPFIRES) && !(state2.getValue(BlockStateProperties.LIT))) {
+                                    return;
+                                }
+                                if (state2.is(BlockTags.CAMPFIRES) && state2.getValue(BlockStateProperties.LIT)){
+                                    event.setCanceled(true);
+                                    itemEntity.discard();
+                                    itemEntity.playSound(SoundEvents.GENERIC_BURN, 0.4f, 2);
+                                }
+                                if (state.is(BlockTags.FIRE)) {
+                                    itemEntity.playSound(SoundEvents.GENERIC_BURN, 0.4f, 2);
+                                }
                                 if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
                                     serverLevel.addFreshEntity(new ItemEntity(serverLevel, itemEntityPos.x(), itemEntityPos.y() + 2D,
                                             itemEntityPos.z(), Items.CHARCOAL.getDefaultInstance()));
