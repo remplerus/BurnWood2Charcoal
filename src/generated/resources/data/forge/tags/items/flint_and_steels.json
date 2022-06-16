@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "minecraft:flint_and_steel",
-    "tconstruct:flint_and_brick"
+    {
+      "id": "tconstruct:flint_and_brick",
+      "required": false
+    }
   ]
 }

@@ -92,7 +92,7 @@ public class BurnLog2Char
         }
 
         protected void addTags() {
-            tag(FLINT_STEEL).add(Items.FLINT_AND_STEEL);
+            tag(FLINT_STEEL).add(Items.FLINT_AND_STEEL).addOptional(new ResourceLocation("tconstruct", "flint_and_brick"));
         }
     }
 
