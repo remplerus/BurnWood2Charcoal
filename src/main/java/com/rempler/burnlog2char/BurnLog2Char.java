@@ -5,6 +5,9 @@ import com.electronwill.nightconfig.core.io.WritingMode;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +21,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CampfireCookingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -39,6 +44,7 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.util.Random;
+import java.util.function.Consumer;
 
 @Mod("burnlog2char")
 public class BurnLog2Char
@@ -90,9 +96,20 @@ public class BurnLog2Char
         }
     }
 
+    public static class RecipeGenerator extends RecipeProvider {
+        public RecipeGenerator(DataGenerator generator) {
+            super(generator);
+        }
+
+        protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
+            SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ItemTags.LOGS_THAT_BURN), Items.CHARCOAL, 0.15F, 200)
+                    .unlockedBy("has_log", has(ItemTags.LOGS_THAT_BURN))
+                    .save(consumer, new ResourceLocation(BurnLog2Char.MODID, "campfire_charcoal"));
+        }
+    }
+
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class EventHandler {
-        // TODO adding campfires
         public static void onItemUseOnBlockEvent(PlayerInteractEvent.RightClickBlock event) {
             Level level = event.getWorld();
             if (!level.isClientSide) {
@@ -113,8 +130,7 @@ public class BurnLog2Char
                 if (stack.is(ItemTags.LOGS_THAT_BURN)) {
                     BlockState state = serverLevel.getBlockState(event.getPos());
                     FluidState fstate = serverLevel.getFluidState(event.getPos().above());
-                    if (state.is(BlockTags.FIRE) || fstate.is(FluidTags.LAVA) ||
-                            state.is(BlockTags.CAMPFIRES) && state.getValue(BlockStateProperties.LIT)) {
+                    if (state.is(BlockTags.FIRE) || fstate.is(FluidTags.LAVA)) {
                         Vec3 playerPos = event.getPlayer().position();
                         if (new Random().nextInt(0, 100) < Config.charcoalChance.get()) {
                             serverLevel.addFreshEntity(new ItemEntity(serverLevel, playerPos.x(), playerPos.y() + 1D,
@@ -134,17 +150,8 @@ public class BurnLog2Char
                     if (event.getEntity() instanceof ItemEntity itemEntity) {
                         if (itemEntity.getItem().is(ItemTags.LOGS_THAT_BURN)) {
                             BlockState state = serverLevel.getBlockState(new BlockPos(itemEntity.position()));
-                            BlockState state2 = serverLevel.getBlockState(itemEntity.blockPosition().below());
                             Vec3 itemEntityPos = itemEntity.position();
-                            if (state.is(BlockTags.FIRE) || state.getFluidState().is(FluidTags.LAVA) || state2.is(BlockTags.CAMPFIRES)) {
-                                if (state2.is(BlockTags.CAMPFIRES) && !(state2.getValue(BlockStateProperties.LIT))) {
-                                    return;
-                                }
-                                if (state2.is(BlockTags.CAMPFIRES) && state2.getValue(BlockStateProperties.LIT)){
-                                    event.setCanceled(true);
-                                    itemEntity.discard();
-                                    itemEntity.playSound(SoundEvents.GENERIC_BURN, 0.4f, 2);
-                                }
+                            if (state.is(BlockTags.FIRE) || state.getFluidState().is(FluidTags.LAVA)) {
                                 if (state.is(BlockTags.FIRE)) {
                                     itemEntity.playSound(SoundEvents.GENERIC_BURN, 0.4f, 2);
                                 }
@@ -165,6 +172,7 @@ public class BurnLog2Char
                 ExistingFileHelper fileHelper = event.getExistingFileHelper();
                 DataGenerator generator = event.getGenerator();
                 generator.addProvider(new ItemTagsGenerator(generator, new BlockTagsProvider(generator, BurnLog2Char.MODID, fileHelper), fileHelper));
+                generator.addProvider(new RecipeGenerator(generator));
             }
         }
     }
